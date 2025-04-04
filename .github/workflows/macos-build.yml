@@ -44,7 +44,7 @@ jobs:
         run: python setup.py py2app
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mac-app
           path: dist/
