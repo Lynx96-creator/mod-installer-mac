@@ -19,6 +19,11 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: 🧠 Show directory structure before anything
+        run: |
+          echo "📂 Root Directory:"
+          ls -R .
+
       - name: 🔧 Create build directory
         run: |
           mkdir -p mod_installer.app/Contents/build
@@ -26,19 +31,23 @@ jobs:
 
       - name: 🚚 Move executable to build folder
         run: |
+          echo "📂 Listing mod_installer.app/Contents/MacOS:"
+          ls -l mod_installer.app/Contents/MacOS || echo "❌ Directory missing!"
+
           if [ -f "mod_installer.app/Contents/MacOS/mod_installer" ]; then
             chmod +x mod_installer.app/Contents/MacOS/mod_installer
             cp mod_installer.app/Contents/MacOS/mod_installer mod_installer.app/Contents/build/mod_installer.app
             echo "✅ Executable moved"
           else
-            echo "❌ ERROR: mod_installer.app/Contents/MacOS/mod_installer not found!"
+            echo "❌ ERROR: mod_installer not found!"
             exit 1
           fi
 
       - name: 📦 Zip the .app folder
         run: |
+          echo "📦 Zipping mod_installer.app..."
           zip -r mod_installer.zip mod_installer.app
-          echo "✅ .app folder zipped"
+          echo "✅ Zipped .app folder"
 
       - name: ⬆️ Upload .zip as Artifact
         uses: actions/upload-artifact@v4
