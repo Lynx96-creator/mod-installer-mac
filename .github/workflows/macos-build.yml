@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -16,22 +13,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          node-version: '18'
+          python-version: '3.11'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install py2app
+        run: pip install py2app
 
-      - name: Build project
-        run: npm run build
+      - name: Show Python version
+        run: python --version
 
-      - name: Ensure artifact directory exists
+      - name: Make build folder
         run: mkdir -p dist
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: dist/
+      - name: Copy script
+        run: cp mod_installer.py dist/
+
+      - name: Create minimal setup.py
+        run: |
+          echo "from setuptools import setup; import py2app; setup(app=['mod_installer.py'], options={'py2app': {'argv_emulation': True}}, setup_requires=['py2app'])" > setup.py
+
+      - name: Build Mac app with py2app
+        run
