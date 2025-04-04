@@ -1,32 +1,34 @@
-name: Build Mac Executable
+name: Build macOS App
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: 3.11
 
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
-        pip install pyinstaller tqdm requests
+        python -m pip install --upgrade pip
+        pip install py2app
 
-    - name: Build executable
+    - name: Build .app bundle with py2app
       run: |
-        pyinstaller --onefile mod_installer.py
+        python setup.py py2app
 
-    - name: Upload executable
+    - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: mod_installer_mac
-        path: dist/mod_installer
+        name: mac-app
+        path: dist/*.app
