@@ -1,0 +1,32 @@
+name: Build Mac Executable
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install pyinstaller tqdm requests
+
+    - name: Build executable
+      run: |
+        pyinstaller --onefile mod_installer.py
+
+    - name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: mod_installer_mac
+        path: dist/mod_installer
