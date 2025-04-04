@@ -27,8 +27,9 @@ jobs:
       run: |
         python setup.py py2app
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: mac-app
-        path: dist/*.app
+    - name: Upload Build Artifacts
+  uses: actions/upload-artifact@v3
+  with:
+    name: mac-build
+    path: build-output/
+
