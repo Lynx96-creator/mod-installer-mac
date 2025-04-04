@@ -1,50 +1,39 @@
-name: Build macOS App
+name: macOS App Builder 🖥️🍎
 
-on: 
+on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  build:
+  build-macos-app:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: 🐍 Set up Python 3
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.x'
 
-      - name: Install py2app
-        run: pip install py2app
-
-      - name: Show Python version
-        run: python --version
-
-      - name: Make build folder
-        run: mkdir -p dist
-
-      - name: Copy script
-        run: cp mod_installer.py dist/
-
-      - name: Create minimal setup.py
+      - name: 🔧 Create build directory
         run: |
-          echo "from setuptools import setup" > setup.py
-          echo "import py2app" >> setup.py
-          echo "setup(" >> setup.py
-          echo "    app=['mod_installer.py']," >> setup.py
-          echo "    options={'py2app': {'argv_emulation': True}}," >> setup.py
-          echo "    setup_requires=['py2app']" >> setup.py
-          echo ")" >> setup.py
+          mkdir -p mod_installer.app/Contents/build
 
-      - name: Build Mac app with py2app
-        run: python setup.py py2app
+      - name: 🚚 Move built file to build folder
+        run: |
+          chmod +x mod_installer.app/Contents/MacOS/mod_installer
+          cp mod_installer.app/Contents/MacOS/mod_installer mod_installer.app/Contents/build/mod_installer.app
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+      - name: 📦 Zip .app folder
+        run: |
+          zip -r mod_installer.zip mod_installer.app
+
+      - name: ⬆️ Upload .app Artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: mac-app
-          path: dist/
+          name: mod_installer_macos_app
+          path: mod_installer.zip
