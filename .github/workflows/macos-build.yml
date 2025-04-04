@@ -1,4 +1,4 @@
-name: macOS App Builder 🖥️🍎
+name: macOS App Builder 🖥️🍏
 
 on:
   push:
@@ -22,17 +22,25 @@ jobs:
       - name: 🔧 Create build directory
         run: |
           mkdir -p mod_installer.app/Contents/build
+          echo "✅ Build directory created"
 
-      - name: 🚚 Move built file to build folder
+      - name: 🚚 Move executable to build folder
         run: |
-          chmod +x mod_installer.app/Contents/MacOS/mod_installer
-          cp mod_installer.app/Contents/MacOS/mod_installer mod_installer.app/Contents/build/mod_installer.app
+          if [ -f "mod_installer.app/Contents/MacOS/mod_installer" ]; then
+            chmod +x mod_installer.app/Contents/MacOS/mod_installer
+            cp mod_installer.app/Contents/MacOS/mod_installer mod_installer.app/Contents/build/mod_installer.app
+            echo "✅ Executable moved"
+          else
+            echo "❌ ERROR: mod_installer.app/Contents/MacOS/mod_installer not found!"
+            exit 1
+          fi
 
-      - name: 📦 Zip .app folder
+      - name: 📦 Zip the .app folder
         run: |
           zip -r mod_installer.zip mod_installer.app
+          echo "✅ .app folder zipped"
 
-      - name: ⬆️ Upload .app Artifact
+      - name: ⬆️ Upload .zip as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mod_installer_macos_app
