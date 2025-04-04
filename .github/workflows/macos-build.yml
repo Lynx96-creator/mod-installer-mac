@@ -33,7 +33,7 @@ jobs:
           zip -r mod_installer.zip mod_installer.app
 
       - name: ⬆️ Upload .app Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mod_installer_macos_app
           path: mod_installer.zip
