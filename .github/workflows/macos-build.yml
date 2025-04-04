@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -32,7 +32,19 @@ jobs:
 
       - name: Create minimal setup.py
         run: |
-          echo "from setuptools import setup; import py2app; setup(app=['mod_installer.py'], options={'py2app': {'argv_emulation': True}}, setup_requires=['py2app'])" > setup.py
+          echo "from setuptools import setup" > setup.py
+          echo "import py2app" >> setup.py
+          echo "setup(" >> setup.py
+          echo "    app=['mod_installer.py']," >> setup.py
+          echo "    options={'py2app': {'argv_emulation': True}}," >> setup.py
+          echo "    setup_requires=['py2app']" >> setup.py
+          echo ")" >> setup.py
 
       - name: Build Mac app with py2app
-        run
+        run: python setup.py py2app
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: mac-app
+          path: dist/
