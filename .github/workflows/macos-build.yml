@@ -24,7 +24,8 @@ jobs:
 
       - name: 🛠️ Create setup.py for py2app
         run: |
-          echo 'from setuptools import setup
+          cat <<EOF > setup.py
+from setuptools import setup
 
 APP = ["mod_installer.py"]
 DATA_FILES = []
@@ -39,7 +40,7 @@ setup(
     options={"py2app": OPTIONS},
     setup_requires=["py2app"],
 )
-          ' > setup.py
+EOF
 
       - name: ⚙️ Build .app with py2app
         run: python setup.py py2app
