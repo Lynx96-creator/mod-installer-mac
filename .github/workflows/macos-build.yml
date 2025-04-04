@@ -1,4 +1,4 @@
-name: macOS App Builder 🖥️🍏
+name: macOS App Builder 🍏
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: 📥 Checkout Repo
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
       - name: 🐍 Set up Python 3
@@ -19,37 +19,31 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: 🧠 Show directory structure before anything
+      - name: 🧪 Check working directory structure
         run: |
-          echo "📂 Root Directory:"
-          ls -R .
+          echo "🔎 Root directory:"
+          ls -la
+          echo "🔎 mod_installer.app/Contents/MacOS (if exists):"
+          ls -la mod_installer.app/Contents/MacOS || echo "⚠️ Directory not found"
 
-      - name: 🔧 Create build directory
+      - name: 🛠️ Create build folder and move binary
         run: |
           mkdir -p mod_installer.app/Contents/build
-          echo "✅ Build directory created"
-
-      - name: 🚚 Move executable to build folder
-        run: |
-          echo "📂 Listing mod_installer.app/Contents/MacOS:"
-          ls -l mod_installer.app/Contents/MacOS || echo "❌ Directory missing!"
-
           if [ -f "mod_installer.app/Contents/MacOS/mod_installer" ]; then
+            echo "✅ Found binary, moving..."
             chmod +x mod_installer.app/Contents/MacOS/mod_installer
             cp mod_installer.app/Contents/MacOS/mod_installer mod_installer.app/Contents/build/mod_installer.app
-            echo "✅ Executable moved"
           else
-            echo "❌ ERROR: mod_installer not found!"
+            echo "❌ ERROR: mod_installer binary not found at expected location."
             exit 1
           fi
 
-      - name: 📦 Zip the .app folder
+      - name: 📦 Compress .app to ZIP
         run: |
-          echo "📦 Zipping mod_installer.app..."
           zip -r mod_installer.zip mod_installer.app
-          echo "✅ Zipped .app folder"
+          echo "✅ ZIP created"
 
-      - name: ⬆️ Upload .zip as Artifact
+      - name: ☁️ Upload .app ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: mod_installer_macos_app
