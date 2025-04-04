@@ -27,6 +27,9 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Ensure artifact directory exists
+        run: mkdir -p dist
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
